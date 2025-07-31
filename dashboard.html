@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Interactive Quiz Application</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+        
+        .quiz-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        }
+        
+        .question-card {
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 10px;
+            background-color: #f8f9fa;
+            transition: transform 0.2s;
+        }
+        
+        .question-card:hover {
+            transform: translateY(-3px);
+            background-color: #e9ecef;
+        }
+        
+        .mcq-option {
+            padding: 0.8rem;
+            margin: 0.5rem 0;
+            border-radius: 8px;
+            cursor: pointer;
+            background-color: white;
+            border: 1px solid #dee2e6;
+        }
+        
+        .mcq-option:hover {
+            background-color: #e9ecef;
+            border-color: #adb5bd;
+        }
+        
+        .mcq-option.selected {
+            background-color: #d0ebff;
+            border-color: #74c0fc;
+        }
+        
+        .matching-container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        
+        .matching-column {
+            width: 48%;
+            padding: 1rem;
+            background-color: white;
+            border-radius: 10px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .matching-item {
+            padding: 0.8rem;
+            margin: 0.5rem 0;
+            border-radius: 8px;
+            cursor: move;
+            background-color: #f8f9fa;
+            border: 1px dashed #adb5bd;
+        }
+        
+        .comprehension-passage {
+            background-color: #f1f3f5;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background-color: #4dabf7;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .timer {
+            padding: 0.5rem 1rem;
+            background-color: #212529;
+            color: white;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+        
+        #results {
+            display: none;
+        }
+        
+        .floating-nav {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 1rem 2rem;
+            background-color: white;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .drag-over {
+            background-color: #d0ebff;
+            border: 2px dashed #4dabf7;
+        }
+        
+        @media (max-width: 768px) {
+            .matching-container {
+                flex-direction: column;
+            }
+            
+            .matching-column {
+                width: 100%;
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+</head>
+<body class="py-10 bg-gray-100">
+<div class="container mx-auto px-4">
+<header class="text-center mb-10">
+<h1 class="text-4xl font-bold text-gray-800 mb-2">Knowledge Challenge Quiz</h1>
+<p class="text-gray-600">Test your understanding with our interactive assessment</p>
+</header>
+<div class="quiz-container">
+<div class="timer-container text-center mb-6">
+<div class="timer inline-block">
+<span id="minutes">10</span>:<span id="seconds">00</span>
+</div>
+<div class="progress-bar">
+<div class="progress" id="progress"></div>
+</div>
+</div>
+<form id="quiz-form">
+<!-- MCQ Section -->
+<section class="mb-10" id="mcq-section">
+<h2 class="text-2xl font-semibold mb-6 border-b pb-2">Multiple Choice Questions</h2>
+<div class="space-y-6">
+<!-- Question 1 -->
+<div class="question-card">
+<p class="font-medium mb-3">1. The _______ odor from the rubbish bin made everyone in the room cover their noses.</p>
+<div class="mcq-option" onclick="selectOption(this)">Fresh</div>
+<div class="mcq-option" onclick="selectOption(this)">Faint</div>
+<div class="mcq-option" onclick="selectOption(this)">Sweet</div>
+<div class="mcq-option" onclick="selectOption(this)">Smell</div>
+</div>
+<!-- Question 2 -->
+<div class="question-card">
+<p class="font-medium mb-3">2. The teacher had to _______ to be heard over the noise of the students.</p>
+<div class="mcq-option" onclick="selectOption(this)">Whisper</div>
+<div class="mcq-option" onclick="selectOption(this)">Sing</div>
+<div class="mcq-option" onclick="selectOption(this)">Shout</div>
+<div class="mcq-option" onclick="selectOption(this)">Mumble</div>
+</div>
+<!-- Questions 3-15 would follow the same pattern -->
+<div class="question-card">
+<p class="font-medium mb-3">3. She was _______ all the other athletes because of her exceptional speed and agility.</p>
+<div class="mcq-option" onclick="selectOption(this)">After</div>
+<div class="mcq-option" onclick="selectOption(this)">Before</div>
+<div class="mcq-option" onclick="selectOption(this)">Among</div>
+<div class="mcq-option" onclick="selectOption(this)">Behind</div>
+</div>
+<div class="question-card">
+<p class="font-medium mb-3">4. The doctor used a _______ to track his patient's progress over the months.</p>
+<div class="mcq-option" onclick="selectOption(this)">Notebook</div>
+<div class="mcq-option" onclick="selectOption(this)">Chart</div>
+<div class="mcq-option" onclick="selectOption(this)">Scanner</div>
+<div class="mcq-option" onclick="selectOption(this)">Map</div>
+</div>
+<div class="question-card">
+<p class="font-medium mb-3">5. The sky was filled with dark, threatening _______ just before the storm.</p>
+<div class="mcq-option" onclick="selectOption(this)">Rays</div>
+<div class="mcq-option" onclick="selectOption(this)">Clouds</div>
+<div class="mcq-option" onclick="selectOption(this)">Lights</div>
+<div class="mcq-option" onclick="selectOption(this)">Balloons</div>
+</div>
+<div class="question-card">
+<p class="font-medium mb-3">6. The _______ villain in the movie made everyone hate him for his evil deeds.</p>
+<div class="mcq-option" onclick="selectOption(this)">Kind</div>
+<div class="mcq-option" onclick="selectOption(this)">Nefarious</div>
+<div class="mcq-option" onclick="selectOption(this)">Silly</div>
+<div class="mcq-option" onclick="selectOption(this)">Brave</div>
+</div>
+<div class="question-card">
+<p class="font-medium mb-3">7. His _______ attitude towards society made it hard for him to make friends.</p>
+<div class="mcq-option" onclick="selectOption(this)">Generous</div>
+<div class="mcq-option" onclick="selectOption(this)">Polite</div>
+<div class="mcq-option" onclick="selectOption(this)">Misanthropic</div>
+<div class="mcq-option" onclick="selectOption(this)">Funny</div>
+</div>
+<div class="question-card">
+<p class="font-medium mb-3">8. The _______ plot of the thieves was uncovered by the police before they could carry it out.</p>
+<div class="mcq-option" onclick="selectOption(this)">Happy</div>
+<div class="mcq-option" onclick="selectOption(this)">Nice</div>
+<div class="mcq-option" onclick="selectOption(this)">Nefarious</div>
+<div class="mcq-option" onclick="selectOption(this)">Loyal</div>
+</div>
+<div class="question-card">
+<p class="font-medium mb-3">9. The _______ behavior of the man in the queue made everyone around him uncomfortable.</p>
+<div class="mcq-option" onclick="selectOption(this)">Obnoxious</div>
+<div class="mcq-option" onclick="selectOption(this)">Cheerful</div>
+<div class="mcq-option" onclick="selectOption(this)">Quiet</div>
+<div class="mcq-option" onclick="selectOption(this)">Helpful</div>
+</div>
+<div class="question-card">
+<p class="font-medium mb-3">10. The politician's _______ speech against his opponent caused a stir in the media.</p>
+<div class="mcq-option" onclick="selectOption(this)">Polite</div>
+<div class="mcq-option" onclick="selectOption(this)">Vitriolic</div>
+<div class="mcq-option" onclick="selectOption(this)">Praising</div>
+<div class="mcq-option" onclick="selectOption(this)">Neutral</div>
+</div>
+<!-- Additional MCQ questions would go here -->
+<!-- For brevity, I'm showing 4 out of the 15 questions -->
+</div>
+</section>
+<!-- Matching/Drag & Drop Section -->
+<section class="mb-10" id="matching-section">
+<h2 class="text-2xl font-semibold mb-6 border-b pb-2">Matching Questions</h2>
+<div class="matching-container">
+<div class="matching-column" id="matching-column-a">
+<p class="font-medium mb-3">Items</p>
+<div class="matching-item" data-id="1" draggable="true">1.Shout</div>
+<div class="matching-item" data-id="2" draggable="true">2.Smell</div>
+<div class="matching-item" data-id="3" draggable="true">3.Among</div>
+<div class="matching-item" data-id="4" draggable="true">4.Chart</div>
+<div class="matching-item" data-id="5" draggable="true">5.Cloud</div>
+<div class="matching-item" data-id="6" draggable="true">6.Malevolent</div>
+<div class="matching-item" data-id="7" draggable="true">7.Misanthropic</div>
+<div class="matching-item" data-id="8" draggable="true">8.Nefarious</div>
+<div class="matching-item" data-id="9" draggable="true">9.Obnoxious</div>
+<div class="matching-item" data-id="10" draggable="true">10.Vitriolic</div>
+</div>
+<div class="matching-column" id="matching-column-b">
+<p class="font-medium mb-3">Matches To</p>
+<div class="matching-item" data-match-id="1">A. A diagram or series of data</div>
+<div class="matching-item" data-match-id="2">B. Having or showing a wish to do evil to others</div>
+<div class="matching-item" data-match-id="3">C. A visible mass of condensed water vapor floating in the atmosphere</div>
+<div class="matching-item" data-match-id="4">D. In the midst of; surrounded by</div>
+<div class="matching-item" data-match-id="5">E. Utter a loud cry or words</div>
+<div class="matching-item" data-match-id="6">F. Having a strong unpleasant smell</div>
+<div class="matching-item" data-match-id="7">G. Showing a dislike or distrust of humankind</div>
+<div class="matching-item" data-match-id="8">H. Extremely unpleasant or annoying</div>
+<div class="matching-item" data-match-id="9">I. Expressing bitterness or severe criticism</div>
+<div class="matching-item" data-match-id="10">J. Wicked or criminal</div>
+</div>
+</div>
+</section>
+<!-- Comprehension Section -->
+<section class="mb-10" id="comprehension-section">
+  <h2 class="text-2xl font-semibold mb-6 border-b pb-2">Reading Comprehension</h2>
+
+  <!-- Part 1 -->
+  <div class="comprehension-passage">
+    <h3 class="font-semibold mb-3">The Secret Journey – Part 1</h3>
+    <p class="mb-4">
+      At the bus station, a nervous man named Walter stood among the crowd. He was an introverted man with a pessimistic outlook, often lost in his own thoughts. He bought his ticket and waited for his bus. As he stood there, a vitriolic smell of stale food wafted from the nearby kitchen. Walter's head was full of a secret journey he was about to embark upon.
+      Suddenly, he was an altruistic spy infiltrating a nefarious organization's secret laboratory. Walter's hand held a chart that contained crucial information. He was brave and kind, unlike the acrimonious and obnoxious members of the organization. He felt a rush of excitement as he walked down the corridor, his heart pounding in his chest.
+    </p>
+
+    <div class="question-card">
+      <p class="font-medium mb-3">1. Where is Walter at the beginning of the story?</p>
+      <div class="mcq-option" onclick="selectOption(this)">At the bus station</div>
+      <div class="mcq-option" onclick="selectOption(this)">At his home</div>
+      <div class="mcq-option" onclick="selectOption(this)">In a laboratory</div>
+      <div class="mcq-option" onclick="selectOption(this)">Inside a train</div>
+    </div>
+
+    <div class="question-card">
+      <p class="font-medium mb-3">2. How does Walter feel about his upcoming journey?</p>
+      <div class="mcq-option" onclick="selectOption(this)">Nervous and thoughtful</div>
+      <div class="mcq-option" onclick="selectOption(this)">Excited and loud</div>
+      <div class="mcq-option" onclick="selectOption(this)">Bored and uninterested</div>
+      <div class="mcq-option" onclick="selectOption(this)">Joyful and energetic</div>
+    </div>
+
+    <div class="question-card">
+      <p class="font-medium mb-3">3. What does Walter imagine himself as?</p>
+      <div class="mcq-option" onclick="selectOption(this)">A soldier</div>
+      <div class="mcq-option" onclick="selectOption(this)">A businessman</div>
+      <div class="mcq-option" onclick="selectOption(this)">An altruistic spy</div>
+      <div class="mcq-option" onclick="selectOption(this)">A professor</div>
+    </div>
+
+    <div class="question-card">
+      <p class="font-medium mb-3">4. What is the nature of the organization Walter imagines infiltrating?</p>
+      <div class="mcq-option" onclick="selectOption(this)">Friendly and open</div>
+      <div class="mcq-option" onclick="selectOption(this)">Scientific and helpful</div>
+      <div class="mcq-option" onclick="selectOption(this)">Nefarious and secretive</div>
+      <div class="mcq-option" onclick="selectOption(this)">Governmental and legal</div>
+    </div>
+
+    <div class="question-card">
+      <p class="font-medium mb-3">5. How does Walter feel about the members of the organization?</p>
+      <div class="mcq-option" onclick="selectOption(this)">He finds them kind</div>
+      <div class="mcq-option" onclick="selectOption(this)">He admires them</div>
+      <div class="mcq-option" onclick="selectOption(this)">He sees them as acrimonious and obnoxious</div>
+      <div class="mcq-option" onclick="selectOption(this)">He feels jealous of them</div>
+    </div>
+  </div>
+
+  <!-- Part 2 -->
+  <div class="comprehension-passage">
+    <h3 class="font-semibold mb-3">The Secret Journey – Part 2</h3>
+    <p class="mb-4">
+      In reality, Walter was an ordinary man with an ordinary job. He was a driver - of a train. He was neither brave nor exciting like the spy he imagined himself to be. But the daily routine of his life did not prevent him from escaping into his vivid thoughts. He felt a pang of sadness as he boarded the train.
+      Suddenly, he was a pediatrician, saving a baby's life in a makeshift hospital amidst a war zone. The air was filled with a bellicose and malevolent tension. But Walter was focused, his hands steady as he performed the procedure. He was proud of his imagined self, standing against the disdainful forces of the enemy.
+    </p>
+
+    <div class="question-card">
+      <p class="font-medium mb-3">1. What is Walter's actual job?</p>
+      <div class="mcq-option" onclick="selectOption(this)">Train driver</div>
+      <div class="mcq-option" onclick="selectOption(this)">Doctor</div>
+      <div class="mcq-option" onclick="selectOption(this)">Chef</div>
+      <div class="mcq-option" onclick="selectOption(this)">Teacher</div>
+    </div>
+
+    <div class="question-card">
+      <p class="font-medium mb-3">2. How does Walter feel about his real life?</p>
+      <div class="mcq-option" onclick="selectOption(this)">He finds it adventurous</div>
+      <div class="mcq-option" onclick="selectOption(this)">He finds it sad and routine</div>
+      <div class="mcq-option" onclick="selectOption(this)">He is proud of it</div>
+      <div class="mcq-option" onclick="selectOption(this)">He thinks it's dangerous</div>
+    </div>
+
+    <div class="question-card">
+      <p class="font-medium mb-3">3. What does Walter imagine himself as in this part of the story?</p>
+      <div class="mcq-option" onclick="selectOption(this)">Soldier</div>
+      <div class="mcq-option" onclick="selectOption(this)">Train driver</div>
+      <div class="mcq-option" onclick="selectOption(this)">Pediatrician</div>
+      <div class="mcq-option" onclick="selectOption(this)">Scientist</div>
+    </div>
+
+    <div class="question-card">
+      <p class="font-medium mb-3">4. Where is Walter in his imagination?</p>
+      <div class="mcq-option" onclick="selectOption(this)">In a peaceful city</div>
+      <div class="mcq-option" onclick="selectOption(this)">In a school</div>
+      <div class="mcq-option" onclick="selectOption(this)">In a war zone hospital</div>
+      <div class="mcq-option" onclick="selectOption(this)">In a courtroom</div>
+    </div>
+
+    <div class="question-card">
+      <p class="font-medium mb-3">5. How does Walter feel about his imagined self?</p>
+      <div class="mcq-option" onclick="selectOption(this)">Embarrassed</div>
+      <div class="mcq-option" onclick="selectOption(this)">Proud</div>
+      <div class="mcq-option" onclick="selectOption(this)">Afraid</div>
+      <div class="mcq-option" onclick="selectOption(this)">Disappointed</div>
+    </div>
+  </div>
+
+  <!-- Part 3 -->
+  <div class="comprehension-passage">
+    <h3 class="font-semibold mb-3">The Secret Journey – Part 3</h3>
+    <p class="mb-4">
+      As Walter's train pulled into the station, he sighed. He looked out the window, the moon shining in the sky. He was tired but satisfied. He had lived another day of his secret life. He was an egotistical hero in his own mind, living a life of excitement and danger, far removed from his ordinary existence.
+      Suddenly, he was an astronaut, looking at the earth from the star-filled sky. He felt a sense of awe as he floated among the clouds. He was a brave explorer, standing against the misanthropic forces of space. His journey was over, but he was ready for the next adventure.
+    </p>
+
+    <div class="question-card">
+      <p class="font-medium mb-3">1. How does Walter feel as the train pulls into the station?</p>
+      <div class="mcq-option" onclick="selectOption(this)">Tired but satisfied</div>
+      <div class="mcq-option" onclick="selectOption(this)">Angry and loud</div>
+      <div class="mcq-option" onclick="selectOption(this)">Nervous and scared</div>
+      <div class="mcq-option" onclick="selectOption(this)">Sleepy and annoyed</div>
+    </div>
+
+    <div class="question-card">
+      <p class="font-medium mb-3">2. How does Walter perceive himself in his mind?</p>
+      <div class="mcq-option" onclick="selectOption(this)">As a villain</div>
+      <div class="mcq-option" onclick="selectOption(this)">As an egotistical hero</div>
+      <div class="mcq-option" onclick="selectOption(this)">As a weak person</div>
+      <div class="mcq-option" onclick="selectOption(this)">As a train driver</div>
+    </div>
+
+    <div class="question-card">
+      <p class="font-medium mb-3">3. What does Walter imagine himself as in this part of the story?</p>
+      <div class="mcq-option" onclick="selectOption(this)">Doctor</div>
+      <div class="mcq-option" onclick="selectOption(this)">Spy</div>
+      <div class="mcq-option" onclick="selectOption(this)">Astronaut</div>
+      <div class="mcq-option" onclick="selectOption(this)">Soldier</div>
+    </div>
+
+    <div class="question-card">
+      <p class="font-medium mb-3">4. Where is Walter in his imagination?</p>
+      <div class="mcq-option" onclick="selectOption(this)">On a spaceship near Earth</div>
+      <div class="mcq-option" onclick="selectOption(this)">Inside a courtroom</div>
+      <div class="mcq-option" onclick="selectOption(this)">In a city hospital</div>
+      <div class="mcq-option" onclick="selectOption(this)">Inside a jungle</div>
+    </div>
+
+    <div class="question-card">
+      <p class="font-medium mb-3">5. How does Walter feel about his imagined self?</p>
+      <div class="mcq-option" onclick="selectOption(this)">He feels a sense of awe and bravery</div>
+      <div class="mcq-option" onclick="selectOption(this)">He feels bored</div>
+      <div class="mcq-option" onclick="selectOption(this)">He feels fearful and small</div>
+      <div class="mcq-option" onclick="selectOption(this)">He feels silly</div>
+    </div>
+  </div>
+</section>
+
+<div class="floating-nav">
+<button class="px-4 py-2 bg-gray-200 rounded-lg" onclick="previousSection()" type="button">Previous</button>
+<button class="px-4 py-2 bg-blue-500 text-white rounded-lg" onclick="nextSection()" type="button">Next</button>
+</div>
+</form>
+<!-- Results Section -->
+<div class="text-center py-10" id="results">
+<h2 class="text-3xl font-bold mb-6">Quiz Results</h2>
+<div class="result-circle mx-auto w-48 h-48 rounded-full border-8 border-blue-100 flex items-center justify-center mb-6">
+<span class="text-5xl font-bold" id="score">0%</span>
+</div>
+<p class="text-xl mb-6" id="feedback">Great effort! You're on your way to mastery.</p>
+<button class="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600" onclick="resetQuiz()">Try Again</button>
+</div>
+</div>
+</div>
+<script>
+        // Quiz state management
+        const quizState = {
+            currentSection: 0,
+            sections: ['mcq-section', 'matching-section', 'comprehension-section'],
+            answers: {},
+            timer: 600, // 10 minutes in seconds
+            matchedPairs: []
+        };
+        
+        // DOM elements
+        const quizForm = document.getElementById('quiz-form');
+        const resultsSection = document.getElementById('results');
+        const scoreDisplay = document.getElementById('score');
+        const feedbackDisplay = document.getElementById('feedback');
+        const progressBar = document.getElementById('progress');
+        const minutesDisplay = document.getElementById('minutes');
+        const secondsDisplay = document.getElementById('seconds');
+        
+        // Timer interval
+        let timerInterval;
+        
+        // Initialize the quiz
+        function initQuiz() {
+            showSection(0);
+            startTimer();
+            setupDragAndDrop();
+            
+            // Hide all sections except the first one
+            quizState.sections.forEach((section, index) => {
+                if (index !== 0) {
+                    document.getElementById(section).style.display = 'none';
+                }
+            });
+        }
+        
+        // Show a specific section
+        function showSection(index) {
+            if (index >= 0 && index < quizState.sections.length) {
+                // Hide current section
+                document.getElementById(quizState.sections[quizState.currentSection]).style.display = 'none';
+                
+                // Show new section
+                quizState.currentSection = index;
+                document.getElementById(quizState.sections[index]).style.display = 'block';
+                
+                // Update progress bar
+                const progress = ((index + 1) / quizState.sections.length) * 100;
+                progressBar.style.width = `${progress}%`;
+            }
+        }
+        
+        // Navigation functions
+        function nextSection() {
+            if (quizState.currentSection < quizState.sections.length - 1) {
+                showSection(quizState.currentSection + 1);
+            } else {
+                submitQuiz();
+            }
+        }
+        
+        function previousSection() {
+            if (quizState.currentSection > 0) {
+                showSection(quizState.currentSection - 1);
+            }
+        }
+        
+        // MCQ selection
+        function selectOption(option) {
+            const questionCard = option.parentElement;
+            const options = questionCard.querySelectorAll('.mcq-option');
+            
+            // Remove selected class from all options in this question
+            options.forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked option
+            option.classList.add('selected');
+            
+            // Store the answer
+            const questionText = questionCard.querySelector('p').textContent;
+            quizState.answers[questionText] = option.textContent;
+        }
+        
+        // Drag and drop functionality
+        function setupDragAndDrop() {
+            const draggables = document.querySelectorAll('.matching-item[draggable="true"]');
+            const dropZones = document.querySelectorAll('.matching-item:not([draggable="true"])');
+            
+            draggables.forEach(draggable => {
+                draggable.addEventListener('dragstart', () => {
+                    draggable.classList.add('dragging');
+                });
+                
+                draggable.addEventListener('dragend', () => {
+                    draggable.classList.remove('dragging');
+                    checkMatches();
+                });
+            });
+            
+            dropZones.forEach(zone => {
+                zone.addEventListener('dragover', e => {
+                    e.preventDefault();
+                    zone.classList.add('drag-over');
+                });
+                
+                zone.addEventListener('dragleave', () => {
+                    zone.classList.remove('drag-over');
+                });
+                
+                zone.addEventListener('drop', e => {
+                    e.preventDefault();
+                    zone.classList.remove('drag-over');
+                    
+                    const draggable = document.querySelector('.dragging');
+                    const matchId = zone.getAttribute('data-match-id');
+                    
+                    if (draggable && matchId) {
+                        const itemId = draggable.getAttribute('data-id');
+                        
+                        // Check if this item is already matched
+                        const existingMatchIndex = quizState.matchedPairs.findIndex(pair => pair.itemId === itemId);
+                        
+                        if (existingMatchIndex !== -1) {
+                            // Remove existing match
+                            quizState.matchedPairs.splice(existingMatchIndex, 1);
+                        }
+                        
+                        // Add new match
+                        quizState.matchedPairs.push({
+                            itemId: itemId,
+                            matchId: matchId
+                        });
+                    }
+                });
+            });
+        }
+        
+        // Check matched pairs for correctness
+        function checkMatches() {
+            const results = {};
+            
+            quizState.matchedPairs.forEach(pair => {
+                if (pair.itemId === pair.matchId) {
+                    results[pair.itemId] = true;
+                } else {
+                    results[pair.itemId] = false;
+                }
+            });
+            
+            // Update UI based on correctness
+            const matchingItems = document.querySelectorAll('.matching-item[data-id]');
+            matchingItems.forEach(item => {
+                const itemId = item.getAttribute('data-id');
+                if (results[itemId] === true) {
+                    item.style.backgroundColor = '#d3f9d8';
+                    item.style.border = '1px solid #40c057';
+                } else if (results[itemId] === false) {
+                    item.style.backgroundColor = '#ffec99';
+                    item.style.border = '1px solid #ffd43b';
+                }
+            });
+        }
+        
+        // Timer functionality
+        function startTimer() {
+            updateTimerDisplay();
+            timerInterval = setInterval(() => {
+                quizState.timer--;
+                updateTimerDisplay();
+                
+                if (quizState.timer <= 0) {
+                    clearInterval(timerInterval);
+                    submitQuiz();
+                }
+            }, 1000);
+        }
+        
+        function updateTimerDisplay() {
+            const minutes = Math.floor(quizState.timer / 60);
+            const seconds = quizState.timer % 60;
+            
+            minutesDisplay.textContent = minutes.toString().padStart(2, '0');
+            secondsDisplay.textContent = seconds.toString().padStart(2, '0');
+            
+            // Change color when time is running low
+            if (quizState.timer <= 60) {
+                document.querySelector('.timer').style.backgroundColor = '#e03131';
+            }
+        }
+        
+        function submitQuiz() {
+    clearInterval(timerInterval);
+
+    let correctAnswers = 0;
+    const totalQuestions = 25;
+
+    const correctMcqAnswers = {
+        "1. The _______ odor from the rubbish bin made everyone in the room cover their noses.": "Smell",
+        "2. The teacher had to _______ to be heard over the noise of the students.": "Shout",
+        "3. She was _______ all the other athletes because of her exceptional speed and agility.": "Among",
+        "4. The doctor used a _______ to track his patient's progress over the months.": "Chart",
+        "5. The sky was filled with dark, threatening _______ just before the storm.": "Clouds",
+        "6. The _______ villain in the movie made everyone hate him for his evil deeds.": "Nefarious",
+        "7. His _______ attitude towards society made it hard for him to make friends.": "Misanthropic",
+        "8. The _______ plot of the thieves was uncovered by the police before they could carry it out.": "Nefarious",
+        "9. The _______ behavior of the man in the queue made everyone around him uncomfortable.": "Obnoxious",
+        "10. The politician's _______ speech against his opponent caused a stir in the media.": "Vitriolic"
+    };
+
+    Object.keys(correctMcqAnswers).forEach(question => {
+        if (quizState.answers[question] === correctMcqAnswers[question]) {
+            correctAnswers++;
+        }
+    });
+
+    const correctMatches = quizState.matchedPairs.filter(pair => pair.itemId === pair.matchId).length;
+    correctAnswers += correctMatches;
+
+    const comprehensionQuestions = [
+        "1. Where is Walter at the beginning of the story?",
+        "2. How does Walter feel about his upcoming journey?",
+        "3. What does Walter imagine himself as?",
+        "4. What is the nature of the organization Walter imagines infiltrating?",
+        "5. How does Walter feel about the members of the organization?"
+    ];
+
+    comprehensionQuestions.forEach(q => {
+        if (quizState.answers[q]) correctAnswers++;
+    });
+
+    const scorePercentage = Math.round((correctAnswers / totalQuestions) * 100);
+
+    quizForm.style.display = 'none';
+    resultsSection.style.display = 'block';
+    scoreDisplay.textContent = `${scorePercentage}%`;
+
+    if (scorePercentage >= 80) {
+        feedbackDisplay.textContent = 'Excellent work! You have a strong understanding of the material.';
+    } else if (scorePercentage >= 60) {
+        feedbackDisplay.textContent = 'Good job! You have a decent understanding but could improve in some areas.';
+    } else if (scorePercentage >= 40) {
+        feedbackDisplay.textContent = 'Keep practicing! Review the material and try again.';
+    } else {
+        feedbackDisplay.textContent = 'Consider reviewing the material thoroughly before trying again.';
+    }
+}
+
+        
+        // Reset the quiz
+        function resetQuiz() {
+            quizState.currentSection = 0;
+            quizState.answers = {};
+            quizState.matchedPairs = [];
+            quizState.timer = 600;
+            
+            // Reset UI
+            quizForm.style.display = 'block';
+            resultsSection.style.display = 'none';
+            
+            // Reset MCQ selections
+            document.querySelectorAll('.mcq-option.selected').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Reset matching items
+            document.querySelectorAll('.matching-item').forEach(item => {
+                item.style.backgroundColor = '';
+                item.style.border = '';
+            });
+            
+            // Restart timer
+            startTimer();
+            showSection(0);
+        }
+        
+        // Initialize the quiz when the page loads
+        window.addEventListener('DOMContentLoaded', initQuiz);
+    </script>
+</body>
+</html>
