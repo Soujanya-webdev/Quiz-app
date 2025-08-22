@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuizMaster | Engaging Learning Through Interactive Quizzes</title>
+    <meta name="description" content="Test your knowledge with our interactive quiz platform featuring various question types including fill-in-the-blank, matching, and comprehension exercises.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes growLeft {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        .animate-pulse {
+            animation: pulse 1.5s infinite;
+        }
+        .animate-slideInRight {
+            animation: slideInRight 0.5s ease-out forwards;
+        }
+        .animate-growLeft {
+            animation: growLeft 0.5s ease-out forwards;
+        }
+        .progress-animation {
+            transition: width 0.5s ease-out;
+        }
+        .flip-card {
+            perspective: 1000px;
+        }
+        .flip-card-inner {
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .flip-card:hover .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        .flip-card-front, .flip-card-back {
+            backface-visibility: hidden;
+        }
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+        .question-card {
+            transition: all 0.3s ease;
+        }
+        .question-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .drag-item {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .drag-item:active {
+            transform: scale(1.05);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="font-['Poppins'] bg-gradient-to-br from-indigo-50 to-purple-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm py-4">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <img src="quiz.jpg" alt="QuizMaster logo - a stylized brain with graduation cap icon" class="h-8 w-8 rounded-full mr-2">
+                        <span class="text-xl font-bold text-indigo-600">QuizMaster</span>
+                    </div>
+                </div>
+                <!-- <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                    <a href="#about" class="border-indigo-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">About</a>
+                    <a href="#quiz-types" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Quiz Types</a>
+                    <a href="#features" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Features</a>
+                </div> -->
+                <div class="-mr-2 flex items-center sm:hidden">
+                    <button type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100" aria-expanded="false">
+                        <span class="sr-only">Open main menu</span>
+                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="relative overflow-hidden bg-gradient-to-r from-indigo-500 to-purple-600">
+        <div class="max-w-7xl mx-auto">
+            <div class="relative z-10 pb-8 sm:pb-16 md:pb-20 lg:max-w-2xl lg:w-full lg:pb-28 xl:pb-32">
+                <main class="mt-10 mx-auto max-w-7xl px-4 sm:mt-12 sm:px-6 md:mt-16 lg:mt-20 lg:px-8 xl:mt-28">
+                    <div class="sm:text-center lg:text-left">
+                        <h1 class="text-4xl tracking-tight font-extrabold text-white sm:text-5xl md:text-6xl animate-fadeIn">
+                            <span class="block">Master Any Subject</span>
+                            <span class="block text-indigo-200">With Interactive Quizzes</span>
+                        </h1>
+                        <p class="mt-3 text-base text-indigo-100 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0 animate-fadeIn" style="animation-delay: 0.2s;">
+                            Engage with various quiz types including fill-in-the-blank, matching, and comprehension exercises to test and enhance your knowledge.
+                        </p>
+                        <div class="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start animate-fadeIn" style="animation-delay: 0.4s;">
+                            <div class="rounded-md shadow animate-pulse" style="animation-delay: 0.6s;">
+                                <a href="dashboard.html" class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-indigo-600 bg-white hover:bg-indigo-50 md:py-4 md:text-lg md:px-10 transition duration-300 transform hover:scale-105">
+                                    Explore Quizzes
+                                </a>
+                            </div>
+                            <div class="mt-3 sm:mt-0 sm:ml-3 animate-fadeIn" style="animation-delay: 0.6s;">
+                                <a href="#about" class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 bg-opacity-60 hover:bg-opacity-70 md:py-4 md:text-lg md:px-10 transition duration-300">
+                                    Learn More
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+        <div class="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2">
+            <img src="quiz.jpg" alt="Diverse group of students collaborating and studying together in a modern classroom setting" class="h-56 w-full object-cover sm:h-72 md:h-96 lg:w-full lg:h-full opacity-90">
+        </div>
+    </div>
+
+    <!-- About Section -->
+    <!-- <div id="about" class="py-12 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="lg:text-center">
+                <h2 class="text-base text-indigo-600 font-semibold tracking-wide uppercase">About QuizMaster</h2>
+                <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+                    A better way to learn and test knowledge
+                </p>
+                <p class="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
+                    Our platform offers an engaging way to reinforce learning through interactive quiz formats.
+                </p>
+            </div>
+
+            <div class="mt-10">
+                <div class="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
+                    <div class="relative animate-slideInRight" style="animation-delay: 0.2s;">
+                        <div class="absolute flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                            </svg>
+                        </div>
+                        <p class="ml-16 text-lg leading-6 font-medium text-gray-900">Interactive Learning</p>
+                        <p class="mt-2 ml-16 text-base text-gray-500">
+                            Our quizzes are designed to keep you engaged with dynamic question types and instant feedback.
+                        </p>
+                    </div>
+
+                    <div class="relative animate-slideInRight" style="animation-delay: 0.4s;">
+                        <div class="absolute flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                        </div>
+                        <p class="ml-16 text-lg leading-6 font-medium text-gray-900">Instant Feedback</p>
+                        <p class="mt-2 ml-16 text-base text-gray-500">
+                            Get immediate results and explanations to understand concepts thoroughly.
+                        </p>
+                    </div>
+
+                    <div class="relative animate-slideInRight" style="animation-delay: 0.6s;">
+                        <div class="absolute flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                            </svg>
+                        </div>
+                        <p class="ml-16 text-lg leading-6 font-medium text-gray-900">Progress Tracking</p>
+                        <p class="mt-2 ml-16 text-base text-gray-500">
+                            Monitor your improvement with detailed performance analytics and history.
+                        </p>
+                    </div>
+
+                    <div class="relative animate-slideInRight" style="animation-delay: 0.8s;">
+                        <div class="absolute flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                        </div>
+                        <p class="ml-16 text-lg leading-6 font-medium text-gray-900">Secure Testing</p>
+                        <p class="mt-2 ml-16 text-base text-gray-500">
+                            Your data and progress are protected with industry-standard security measures.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> -->
+
+    <!-- Quiz Types Section -->
+  
+
+    <!-- Features Section -->
+    <!-- <div id="features" class="bg-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="lg:text-center">
+                <h2 class="text-base text-indigo-600 font-semibold tracking-wide uppercase">Features</h2>
+                <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+                    Why choose QuizMaster?
+                </p>
+            </div>
+
+            <div class="mt-10">
+                <div class="grid grid-cols-1 gap-10 sm:grid-cols-2">
+                    <div class="relative">
+                        <div class="absolute left-0 top-0 flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                        </div>
+                        <div class="ml-16">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900">Quick Feedback</h3>
+                            <p class="mt-2 text-base text-gray-500">
+                                Immediate scoring and detailed explanations help you learn from mistakes and reinforce correct answers.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="relative">
+                        <div class="absolute left-0 top-0 flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
+                            </svg>
+                        </div>
+                        <div class="ml-16">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900">Dashboard Analytics</h3>
+                            <p class="mt-2 text-base text-gray-500">
+                                Detailed reports show your progress over time, highlighting strengths and areas for improvement.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="relative">
+                        <div class="absolute left-0 top-0 flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <div class="ml-16">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900">Timed Practice</h3>
+                            <p class="mt-2 text-base text-gray-500">
+                                Simulate test conditions with timed quizzes to improve both accuracy and speed.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="relative">
+                        <div class="absolute left-0 top-0 flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                            </svg>
+                        </div>
+                        <div class="ml-16">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900">Custom Quizzes</h3>
+                            <p class="mt-2 text-base text-gray-500">
+                                Create your own quizzes or choose from a library of community-generated content on various topics.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> -->
+<!-- 
+    <! Fill in the Blank Quiz -->
+    <!-- <div id="fillInQuiz" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto animate-fadeIn">
+            <div class="p-6">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold text-gray-800">Fill in the Blank</h2>
+                    <button onclick="closeQuiz()" class="text-gray-400 hover:text-gray-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="mt-6 space-y-6">
+                    <!-- Progress Bar -->
+                    <!-- <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm font-medium text-indigo-700">Progress</span>
+                            <span class="text-sm font-medium text-gray-500">1/5</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2.5">
+                            <div class="bg-indigo-600 h-2.5 rounded-full progress-animation" style="width: 20%"></div>
+                        </div>
+                    </div>
+
+                    < Question 1 -->
+                    <!-- <div class="question-card bg-gray-50 p-4 rounded-lg">
+                        <p class="text-lg font-medium">The process by which plants convert sunlight into energy is called <input type="text" class="border-b-2 border-indigo-300 focus:border-indigo-500 outline-none bg-transparent px-1" placeholder="Your answer">.</p>
+                        <div class="mt-3 flex justify-end">
+                            <button class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">Submit</button>
+                        </div>
+                    </div> -->
+
+                    <!-- Question 2 (hidden initially) -->
+                    <div class="question-card bg-gray-50 p-4 rounded-lg hidden">
+                        <p class="text-lg font-medium">The largest planet in our solar system is <input type="text" class="border-b-2 border-indigo-300 focus:border-indigo-500 outline-none bg-transparent px-1" placeholder="Your answer">.</p>
+                        <div class="mt-3 flex justify-end">
+                            <button class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">Submit</button>
+                        </div>
+                    </div>
+
+                    <!-- Question 3 (hidden initially) -->
+                    <div class="question-card bg-gray-50 p-4 rounded-lg hidden">
+                        <p class="text-lg font-medium">The chemical symbol for gold is <input type="text" class="border-b-2 border-indigo-300 focus:border-indigo-500 outline-none bg-transparent px-1" placeholder="Your answer">.</p>
+                        <div class="mt-3 flex justify-end">
+                            <button class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">Submit</button>
+                        </div>
+                    </div>
+
+                    <!-- Question 4 (hidden initially) -->
+                    <div class="question-card bg-gray-50 p-4 rounded-lg hidden">
+                        <p class="text-lg font-medium">The <input type="text" class="border-b-2 border-indigo-300 focus:border-indigo-500 outline-none bg-transparent px-1" placeholder="Your answer"> is the longest river in the world.</p>
+                        <div class="mt-3 flex justify-end">
+                            <button class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">Submit</button>
+                        </div>
+                    </div>
+
+                    <!-- Question 5 (hidden initially) -->
+                    <div class="question-card bg-gray-50 p-4 rounded-lg hidden">
+                        <p class="text-lg font-medium"><input type="text" class="border-b-2 border-indigo-300 focus:border-indigo-500 outline-none bg-transparent px-1" placeholder="Your answer"> wrote the play "Romeo and Juliet".</p>
+                        <div class="mt-3 flex justify-end">
+                            <button class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">Submit</button>
+                        </div>
+                    </div>
+
+                    <!-- Results (hidden initially) -->
+                    <div class="hidden text-center py-8">
+                        <h3 class="text-2xl font-bold text-indigo-600">Quiz Completed!</h3>
+                        <p class="mt-2 text-gray-600">You scored <span class="font-bold text-indigo-600">4/5</span> (80%)</p>
+                        <div class="mt-6">
+                            <button onclick="closeQuiz()" class="px-6 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">Return to Quiz Types</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> 
+
+    <!-- Matching Quiz -->
+ 
+<footer style="background:#121212;color:#fff;padding:40px 20px;text-align:center;font-family:sans-serif;box-shadow:0 -2px 10px rgba(0,0,0,0.2);">
+  <div style="max-width:1100px;margin:auto;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;animation:fadeIn 1.5s ease-in-out;">
+    
+    <!-- Left -->
+    <div style="flex:1;min-width:250px;text-align:left;">
+      <h2 style="margin:0;color:#00ffe1;">QuizMaster</h2>
+      <p style="font-size:14px;color:#ccc;">Master Any Subject
+With Interactive Quizzes</p>
+    </div>
+
+    <!-- Center Links -->
+    <div style="flex:1;min-width:250px;text-align:center;">
+      <a href="#about" style="margin:0 10px;color:#bbb;text-decoration:none;transition:0.3s;">About</a>
+      <a href="#features" style="margin:0 10px;color:#bbb;text-decoration:none;transition:0.3s;">Features</a>
+ 
+    </div>
+
+    <!-- Right Socials -->
+  
+  </div>
+
+  <!-- Bottom -->
+  <div style="margin-top:30px;font-size:13px;color:#888;">
+    © 2025 QuizMaster. All rights reserved.
+  </div>
+
+  <!-- Fade In Keyframes -->
+  <style>
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: translateY(30px);}
+      100% { opacity: 1; transform: translateY(0);}
+    }
+    @media (max-width:768px) {
+      footer div[style*="display:flex"] {
+        flex-direction: column;
+        text-align: center !important;
+        gap: 20px;
+      }
+    }
+  </style>
+</footer>
+
+</body>
+</html>
